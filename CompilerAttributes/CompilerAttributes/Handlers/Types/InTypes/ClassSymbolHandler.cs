@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CompilerAttributes.Handlers
+namespace CompilerAttributes.Handlers.Types.InTypes
 {
 	internal class ClassSymbolHandler : SyntaxNodeHandlerBase<ISymbol, ClassDeclarationSyntax>
 	{

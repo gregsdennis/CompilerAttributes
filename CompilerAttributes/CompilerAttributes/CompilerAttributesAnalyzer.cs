@@ -14,7 +14,6 @@ namespace CompilerAttributes
 	public class CompilerAttributesAnalyzer : DiagnosticAnalyzer
 	{
 		public const string DiagnosticId = "CompilerAttributes";
-		public const string ExperimentalAttributeName = "ExperimentalAttribute";
 		private const string Category = "Features";
 
 		// You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
@@ -60,5 +59,11 @@ namespace CompilerAttributes
 				context.ReportDiagnostic(diagnostic);
 			}
 		}
+	}
+
+	[AttributeUsage(AttributeTargets.Class)]
+	public class GeneratesWarningAttribute : Attribute
+	{
+		public string Message { get; set; }
 	}
 }

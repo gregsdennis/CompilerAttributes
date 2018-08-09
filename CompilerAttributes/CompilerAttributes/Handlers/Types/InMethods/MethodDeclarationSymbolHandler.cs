@@ -3,9 +3,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CompilerAttributes.Handlers
+namespace CompilerAttributes.Handlers.Types.InMethods
 {
-	internal class MethodSymbolHandler : SyntaxNodeHandlerBase<IMethodSymbol, MethodDeclarationSyntax>
+	internal class MethodDeclarationSymbolHandler : SyntaxNodeHandlerBase<IMethodSymbol, MethodDeclarationSyntax>
 	{
 		public override IEnumerable<SyntaxNodeHandledResult> TryHandle(SyntaxNodeAnalysisContext context)
 		{
@@ -15,7 +15,7 @@ namespace CompilerAttributes.Handlers
 			var returnSymbol = methodSymbol.ReturnType as INamedTypeSymbol;
 			var returnSyntax = methodSyntax.ReturnType;
 
-			return CheckType(returnSymbol, returnSyntax);
+			return CheckSymbol(returnSymbol, returnSyntax);
 		}
 	}
 

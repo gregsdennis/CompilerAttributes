@@ -3,16 +3,16 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CompilerAttributes.Handlers
+namespace CompilerAttributes.Handlers.Types.InProperties
 {
-	internal class PropertySyntaxNodeHandler : SyntaxNodeHandlerBase<IPropertySymbol, PropertyDeclarationSyntax>
+	internal class IndexerDeclarationSyntaxNodeHandler : SyntaxNodeHandlerBase<IPropertySymbol, IndexerDeclarationSyntax>
 	{
 		public override IEnumerable<SyntaxNodeHandledResult> TryHandle(SyntaxNodeAnalysisContext context)
 		{
 			var propertySymbol = ((IPropertySymbol) context.ContainingSymbol).Type as INamedTypeSymbol;
-			var propertySyntax = ((PropertyDeclarationSyntax) context.Node).Type;
+			var indexerSyntax = ((IndexerDeclarationSyntax) context.Node).Type;
 
-			return CheckType(propertySymbol, propertySyntax);
+			return CheckSymbol(propertySymbol, indexerSyntax);
 		}
 	}
 }

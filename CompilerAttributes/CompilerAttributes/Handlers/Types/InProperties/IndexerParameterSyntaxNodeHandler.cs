@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CompilerAttributes.Handlers
+namespace CompilerAttributes.Handlers.Types.InProperties
 {
 	internal class IndexerParameterSyntaxNodeHandler : SyntaxNodeHandlerBase<IPropertySymbol, ParameterSyntax>
 	{
@@ -16,7 +16,7 @@ namespace CompilerAttributes.Handlers
 			var typeSymbol = propertySymbol.Parameters.Single(p => p.Name == parameterSyntax.Identifier.Text).Type as INamedTypeSymbol;
 			var typeSyntax = parameterSyntax.Type;
 
-			return CheckType(typeSymbol, typeSyntax);
+			return CheckSymbol(typeSymbol, typeSyntax);
 		}
 	}
 }

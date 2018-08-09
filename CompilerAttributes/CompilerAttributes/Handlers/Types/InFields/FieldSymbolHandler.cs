@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CompilerAttributes.Handlers
+namespace CompilerAttributes.Handlers.Types.InFields
 {
 	internal class FieldSymbolHandler : SyntaxNodeHandlerBase<IFieldSymbol, FieldDeclarationSyntax>
 	{
@@ -12,7 +12,7 @@ namespace CompilerAttributes.Handlers
 			var fieldType = ((IFieldSymbol)context.ContainingSymbol).Type as INamedTypeSymbol;
 			var fieldTypeIdentifier = ((FieldDeclarationSyntax)context.Node).Declaration.Type;
 
-			return CheckType(fieldType, fieldTypeIdentifier);
+			return CheckSymbol(fieldType, fieldTypeIdentifier);
 		}
 	}
 }

@@ -17,36 +17,58 @@ namespace CompilerAttributes.Handlers
 
 		public abstract IEnumerable<SyntaxNodeHandledResult> TryHandle(SyntaxNodeAnalysisContext context);
 
-		protected static IEnumerable<SyntaxNodeHandledResult> CheckType(INamedTypeSymbol symbol, TypeSyntax syntax)
+		protected static IEnumerable<SyntaxNodeHandledResult> CheckSymbol(ISymbol symbol, SyntaxNode syntax)
 		{
 			if (symbol == null) return Enumerable.Empty<SyntaxNodeHandledResult>();
 
-			var attribute = symbol.GetAttributes()
-				.FirstOrDefault(t => t.AttributeClass.Name == CompilerAttributesAnalyzer.ExperimentalAttributeName);
+			var attributes = GetAttributes(symbol);
+
 			var results = new List<SyntaxNodeHandledResult>();
 
-			if (attribute != null)
-				results.Add(new SyntaxNodeHandledResult
-				{
-					Name = symbol.Name,
-					Location = Location.Create(syntax.SyntaxTree, syntax.Span)
-				});
-
-			if (symbol is INamedTypeSymbol namedSymbol && namedSymbol.IsGenericType)
+			foreach (var attribute in attributes)
 			{
-				var genericArgumentSymbols = namedSymbol.TypeArguments;
-				var genericArgumentSyntaxes = syntax.DescendantNodes().OfType<TypeSyntax>();
-
-				var zipped = genericArgumentSymbols.Zip(genericArgumentSyntaxes,
-					(sym, syn) => new {sym, syn});
-
-				foreach (var arg in zipped)
+				if (symbol is INamedTypeSymbol namedSymbol && namedSymbol.IsGenericType)
 				{
-					results.AddRange(CheckType(arg.sym as INamedTypeSymbol, arg.syn));
+					var genericArgumentSymbols = namedSymbol.TypeArguments;
+					var genericArgumentSyntaxes = syntax.DescendantNodes().OfType<TypeSyntax>();
+
+					var zipped = genericArgumentSymbols.Zip(genericArgumentSyntaxes,
+						(sym, syn) => new {sym, syn});
+
+					foreach (var arg in zipped)
+					{
+						results.AddRange(CheckSymbol(arg.sym as INamedTypeSymbol, arg.syn));
+					}
+
+					continue;
 				}
+
+				if (attribute != null)
+					results.Add(new SyntaxNodeHandledResult
+					{
+						Name = symbol.Name,
+						Location = Location.Create(syntax.SyntaxTree, syntax.Span)
+					});
 			}
 
 			return results;
+		}
+
+		private static IEnumerable<AttributeData> GetAttributes(ISymbol symbol)
+		{
+			var attributes = symbol.GetAttributes()
+				.Where(t =>
+					t.AttributeClass.GetAttributes()
+						.Any(a => a.AttributeClass.Name == nameof(GeneratesWarningAttribute) &&
+						          a.AttributeClass.ContainingNamespace.Name == nameof(CompilerAttributes)));
+
+			// TODO: refactor this into an extension method
+			if (!(symbol is INamedTypeSymbol namedSymbol && namedSymbol.IsGenericType)) return attributes;
+
+			var genericArgumentSymbols = namedSymbol.TypeArguments;
+			attributes = attributes.Union(genericArgumentSymbols.SelectMany(GetAttributes));
+
+			return attributes;
 		}
 	}
 }
