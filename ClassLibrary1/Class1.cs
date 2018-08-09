@@ -13,7 +13,8 @@ namespace ClassLibrary1
 
 		public EventHandler<Class1> Event;
 
-		public Class1 Method<T>(Class1 arg1, Class1 arg2, int arg3) where T : Generic<Class1>
+		public Class1 Method<T>(Class1 arg1, Class1 arg2, int arg3)
+			where T : Generic<Class1>
 		{
 			Class1 temp = null;
 			var dictionary = new Dictionary<int, Class1>();
@@ -55,7 +56,7 @@ namespace ClassLibrary1
 	{
 	}
 
-	[GeneratesWarning(Message = "This feature is experimental")]
+	[GeneratesWarning("This feature is experimental.  Please use with care.")]
 	public class ExperimentalAttribute : Attribute
 	{
 	}

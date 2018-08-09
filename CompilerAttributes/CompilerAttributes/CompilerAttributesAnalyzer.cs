@@ -21,30 +21,33 @@ namespace CompilerAttributes
 		private static readonly LocalizableString Title = new LocalizableResourceString(nameof(Resources.AnalyzerTitle), Resources.ResourceManager, typeof(Resources));
 		private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(Resources.AnalyzerMessageFormat), Resources.ResourceManager, typeof(Resources));
 		private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.AnalyzerDescription), Resources.ResourceManager, typeof(Resources));
-		private static readonly IList<ISyntaxNodeHandler> Handlers = typeof(CompilerAttributesAnalyzer).GetTypeInfo()
-			.Assembly
-			.DefinedTypes
-			.Where(t => typeof(ISyntaxNodeHandler).GetTypeInfo().IsAssignableFrom(t) &&
-						!t.IsAbstract && !t.IsInterface)
-			.Select(t => Activator.CreateInstance(t.AsType()))
-			.Cast<ISyntaxNodeHandler>()
-			.ToList();
 
-		private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
+		private static readonly IList<ISyntaxNodeHandler> Handlers =
+			typeof(CompilerAttributesAnalyzer).GetTypeInfo()
+			                                  .Assembly
+			                                  .DefinedTypes
+			                                  .Where(t => typeof(ISyntaxNodeHandler).GetTypeInfo().IsAssignableFrom(t) &&
+			                                              !t.IsAbstract && !t.IsInterface)
+			                                  .Select(t => Activator.CreateInstance(t.AsType()))
+			                                  .Cast<ISyntaxNodeHandler>()
+			                                  .ToList();
+
+		private static readonly DiagnosticDescriptor Rule =
+			new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
 
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
 		public override void Initialize(AnalysisContext context)
 		{
 			context.RegisterSyntaxNodeAction(AnalyzeSyntaxNode,
-				SyntaxKind.MethodDeclaration,
-				SyntaxKind.PropertyDeclaration,
-				SyntaxKind.FieldDeclaration,
-				SyntaxKind.TypeParameter,
-				SyntaxKind.TypeParameterConstraintClause,
-				SyntaxKind.IndexerDeclaration,
-				SyntaxKind.Parameter,
-				SyntaxKind.ClassDeclaration);
+			                                 SyntaxKind.MethodDeclaration,
+			                                 SyntaxKind.PropertyDeclaration,
+			                                 SyntaxKind.FieldDeclaration,
+			                                 SyntaxKind.TypeParameter,
+			                                 SyntaxKind.TypeParameterConstraintClause,
+			                                 SyntaxKind.IndexerDeclaration,
+			                                 SyntaxKind.Parameter,
+			                                 SyntaxKind.ClassDeclaration);
 		}
 
 		private static void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext context)
@@ -55,15 +58,10 @@ namespace CompilerAttributes
 
 			foreach (var result in results)
 			{
-				var diagnostic = Diagnostic.Create(Rule, result.Location, result.Name);
+				var rule = new DiagnosticDescriptor(DiagnosticId, Title, result.Message, Category, DiagnosticSeverity.Warning, true, Description);
+				var diagnostic = Diagnostic.Create(rule, result.Location, result.Name);
 				context.ReportDiagnostic(diagnostic);
 			}
 		}
-	}
-
-	[AttributeUsage(AttributeTargets.Class)]
-	public class GeneratesWarningAttribute : Attribute
-	{
-		public string Message { get; set; }
 	}
 }
