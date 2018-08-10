@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using CompilerAttributes.Handlers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -13,7 +12,6 @@ namespace CompilerAttributes
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public class CompilerAttributesAnalyzer : DiagnosticAnalyzer
 	{
-		public const string DiagnosticId = "CompilerAttributes";
 		private const string Category = "Features";
 
 		// You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
@@ -22,43 +20,25 @@ namespace CompilerAttributes
 		private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(Resources.AnalyzerMessageFormat), Resources.ResourceManager, typeof(Resources));
 		private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.AnalyzerDescription), Resources.ResourceManager, typeof(Resources));
 
-		private static readonly IList<ISyntaxNodeHandler> Handlers =
-			typeof(CompilerAttributesAnalyzer).GetTypeInfo()
-			                                  .Assembly
-			                                  .DefinedTypes
-			                                  .Where(t => typeof(ISyntaxNodeHandler).GetTypeInfo().IsAssignableFrom(t) &&
-			                                              !t.IsAbstract && !t.IsInterface)
-			                                  .Select(t => Activator.CreateInstance(t.AsType()))
-			                                  .Cast<ISyntaxNodeHandler>()
-			                                  .ToList();
-
 		private static readonly DiagnosticDescriptor Rule =
-			new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
+			new DiagnosticDescriptor("ATT0001", Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
 
-		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
 		public override void Initialize(AnalysisContext context)
 		{
-			context.RegisterSyntaxNodeAction(AnalyzeSyntaxNode,
-			                                 SyntaxKind.MethodDeclaration,
-			                                 SyntaxKind.PropertyDeclaration,
-			                                 SyntaxKind.FieldDeclaration,
-			                                 SyntaxKind.TypeParameter,
-			                                 SyntaxKind.TypeParameterConstraintClause,
-			                                 SyntaxKind.IndexerDeclaration,
-			                                 SyntaxKind.Parameter,
-			                                 SyntaxKind.ClassDeclaration);
+			context.RegisterSyntaxNodeAction(AnalyzeSyntaxNode, SyntaxKind.IdentifierName);
 		}
 
 		private static void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext context)
 		{
-			var handlers = Handlers.Where(h => h.Handles(context));
+			var symbol = context.SemanticModel.GetSymbolInfo(context.Node).Symbol;
 
-			var results = handlers.SelectMany(h => h.TryHandle(context));
+			var results = SyntaxNodeHelpers.CheckSymbol(symbol, context.Node);
 
 			foreach (var result in results)
 			{
-				var rule = new DiagnosticDescriptor(DiagnosticId, Title, result.Message, Category, DiagnosticSeverity.Warning, true, Description);
+				var rule = new DiagnosticDescriptor("ATT0001", Title, result.Message, Category, DiagnosticSeverity.Warning, true, Description);
 				var diagnostic = Diagnostic.Create(rule, result.Location, result.Name);
 				context.ReportDiagnostic(diagnostic);
 			}

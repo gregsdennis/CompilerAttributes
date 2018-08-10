@@ -2,28 +2,19 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CompilerAttributes.Handlers
+namespace CompilerAttributes
 {
-	internal abstract class SyntaxNodeHandlerBase<TSymbol, TSyntax> : ISyntaxNodeHandler
-		where TSymbol : ISymbol
-		where TSyntax : SyntaxNode
+	internal static class SyntaxNodeHelpers
 	{
-		public virtual bool Handles(SyntaxNodeAnalysisContext context)
+		public static IEnumerable<IdenifierLocationResult> CheckSymbol(ISymbol symbol, SyntaxNode syntax)
 		{
-			return context.ContainingSymbol is TSymbol && context.Node is TSyntax;
-		}
-
-		public abstract IEnumerable<SyntaxNodeHandledResult> TryHandle(SyntaxNodeAnalysisContext context);
-
-		protected static IEnumerable<SyntaxNodeHandledResult> CheckSymbol(ISymbol symbol, SyntaxNode syntax)
-		{
-			if (symbol == null) return Enumerable.Empty<SyntaxNodeHandledResult>();
+			if (symbol == null || symbol.Name != (syntax as IdentifierNameSyntax)?.Identifier.Text)
+				return Enumerable.Empty<IdenifierLocationResult>();
 
 			var attributes = GetAttributes(symbol);
 
-			var results = new List<SyntaxNodeHandledResult>();
+			var results = new List<IdenifierLocationResult>();
 
 			if (symbol is INamedTypeSymbol namedSymbol && namedSymbol.IsGenericType)
 			{
@@ -39,21 +30,22 @@ namespace CompilerAttributes.Handlers
 				}
 			}
 
-			foreach (var attribute in attributes)
+			foreach (var (attribute, id, message) in attributes)
 			{
-				if (attribute.Attribute != null)
-					results.Add(new SyntaxNodeHandledResult
-						{
-							Name = symbol.Name,
-							Location = Location.Create(syntax.SyntaxTree, syntax.Span),
-							Message = attribute.Message
-						});
+				if (attribute == null) continue;
+				results.Add(new IdenifierLocationResult
+					{
+						Name = symbol.Name,
+						Location = Location.Create(syntax.SyntaxTree, syntax.Span),
+						Id = id ?? 0,
+						Message = message
+					});
 			}
 
 			return results;
 		}
 
-		private static IEnumerable<(AttributeData Attribute, string Message)> GetAttributes(ISymbol symbol)
+		private static IEnumerable<(AttributeData Attribute, int? Id, string Message)> GetAttributes(ISymbol symbol)
 		{
 			var attributes = symbol.GetAttributes()
 			                       .Select(t =>
@@ -61,12 +53,15 @@ namespace CompilerAttributes.Handlers
 					                       var generatorAttribute = t.AttributeClass.GetAttributes()
 					                                                 .FirstOrDefault(a => a.AttributeClass.Name == nameof(GeneratesWarningAttribute) &&
 					                                                                      a.AttributeClass.ContainingNamespace.Name == nameof(CompilerAttributes));
+					                       var attributeArgs = generatorAttribute?.ConstructorArguments
+					                                                             .Select(a => a.Value)
+					                                                             .ToList();
 
-					                       var message = (string) generatorAttribute?.ConstructorArguments
-					                                                                .FirstOrDefault()
-					                                                                .Value;
+										   //var id = (int?) attributeArgs?[0];
+					                       int? id = 0;
+										   var message = (string) attributeArgs?[0];
 
-					                       return (Attribute: t, Message: message);
+					                       return (Attribute: t, Id: id, Message: message);
 				                       })
 			                       .Where(t => t.Attribute != null);
 

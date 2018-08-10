@@ -6,18 +6,21 @@ namespace ClassLibrary1
 {
 	public class Usage
 	{
-		private Class1 _field;
+		[Experimental]
+		private Class1 _field = new Class1();
 
 		public Class1 Property { get; set; }
 		public Class1 this[Class1 arg1, Class1 arg2, int arg3] { get { return null; } set { } }
 
-		public EventHandler<Class1> Event;
+		public event EventHandler<Class1> Event;
 
 		public Class1 Method<T>(Class1 arg1, Class1 arg2, int arg3)
 			where T : Generic<Class1>
 		{
 			Class1 temp = null;
 			var dictionary = new Dictionary<int, Class1>();
+
+			Console.WriteLine(nameof(Class1));
 
 			_field = new Class1();
 			return _field;
