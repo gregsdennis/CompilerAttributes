@@ -76,10 +76,11 @@ If you'd like to help out with the code, please feel free to fork and create a p
 
 This code uses C# 7 features, so a compiler/IDE that supports these features is required.
 
-There are two solutions:
+There are three solutions:
 
 - *ComplierAttributes* - This is the main solution that builds the Nuget package.  It contains three projects the main project, a test project, and a VISX generating project.  Though I don't publish from the VISX project, it's immensely useful for debugging.  It will start a new instance of VS under a different profile and install the VISX.  From there, you just need to open a solution.  That's where the other solution comes in.
 - *ClassLibrary1* - This has some boilerplate code that gives as many examples of usage of a symbol that I cared to think of.  Happily, all of these usages are underlined with little green squigglies, and the error output shows a bunch of warnings.
+- *AutoBuild* - This one just contains the main project.  I use it to isolate this project as part of my CI process.  Just ignore it.
 
 ### Building
 
