@@ -1,8 +1,8 @@
 # CompilerAttributes
 
 [![NuGet version (CompilerAttributes)](https://img.shields.io/nuget/v/CompilerAttributes.svg?style=flat-square)](https://www.nuget.org/packages/CompilerAttributes/)
-[![Build status](https://ci.appveyor.com/api/projects/status/qdlvb960nc7eik2w/branch/master?svg=true)](https://ci.appveyor.com/project/gregsdennis/compilerattributes/branch/master)
-[![MyGet Build Status](https://www.myget.org/BuildSource/Badge/littlecrabsolutions?identifier=b70114b6-4cba-4624-97a9-be505a253c12)](https://www.myget.org/)
+[![Build status](https://ci.appveyor.com/api/projects/status/xcfe8editvax7l3m/branch/master?svg=true)](https://ci.appveyor.com/project/gregsdennis/compilerattributes/branch/master)
+[![MyGet Build Status](https://www.myget.org/BuildSource/Badge/littlecrabsolutions?identifier=d13bf0e6-34b1-4011-9242-5b134eb9f7c3)](https://www.myget.org/)
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/gregsdennis/CompilerAttributes.svg)](http://isitmaintained.com/project/gregsdennis/CompilerAttributes "Percentage of issues still open")
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/gregsdennis/CompilerAttributes.svg)](http://isitmaintained.com/project/gregsdennis/CompilerAttributes "Average time to resolve an issue")
 
