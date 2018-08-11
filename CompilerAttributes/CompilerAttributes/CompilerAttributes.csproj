@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/gregsdennis/CompilerAttributes</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>CompilerAttributes</Description>
-    <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
+    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
     <Copyright>Copyright © 2018 Little Crab Solutions</Copyright>
     <PackageTags>attributes analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
