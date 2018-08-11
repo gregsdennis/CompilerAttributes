@@ -7,5 +7,4 @@ build:
 configuration: Release
 
 before_build:
- - nuget restore CompilerAttributes.sln
  - dotnet restore CompilerAttributes.sln
