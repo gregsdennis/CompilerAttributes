@@ -1,14 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CompilerAttributes
 {
+	/// <summary>
+	/// Provides analysis that generates compiler output for attributes, similarly as it does for the <see cref="ObsoleteAttribute"/>.
+	/// </summary>
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public class CompilerAttributesAnalyzer : DiagnosticAnalyzer
 	{
@@ -20,25 +20,50 @@ namespace CompilerAttributes
 		private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(Resources.AnalyzerMessageFormat), Resources.ResourceManager, typeof(Resources));
 		private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.AnalyzerDescription), Resources.ResourceManager, typeof(Resources));
 
-		private static readonly DiagnosticDescriptor Rule =
-			new DiagnosticDescriptor("ATT0001", Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
+		private static readonly DiagnosticDescriptor WarningRule =
+			new DiagnosticDescriptor("ATT0001", Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description);
+		private static readonly DiagnosticDescriptor ErrorRule =
+			new DiagnosticDescriptor("ATT0002", Title, MessageFormat, Category, DiagnosticSeverity.Error, true, Description);
 
-		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
+		/// <summary>
+		/// Returns a set of descriptors for the diagnostics that this analyzer is capable of producing.
+		/// </summary>
+		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(WarningRule, ErrorRule);
 
+		/// <summary>
+		/// Called once at session start to register actions in the analysis context.
+		/// </summary>
+		/// <param name="context"></param>
 		public override void Initialize(AnalysisContext context)
 		{
-			context.RegisterSyntaxNodeAction(AnalyzeSyntaxNode, SyntaxKind.IdentifierName);
+			context.RegisterSyntaxNodeAction(AnalyzeSyntaxNode,
+			                                 SyntaxKind.IdentifierName,
+			                                 SyntaxKind.GenericName);
 		}
 
 		private static void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext context)
 		{
 			var symbol = context.SemanticModel.GetSymbolInfo(context.Node).Symbol;
-
-			var results = SyntaxNodeHelpers.CheckSymbol(symbol, context.Node);
+			var results = context.Node.CheckSymbol(symbol);
 
 			foreach (var result in results)
 			{
-				var rule = new DiagnosticDescriptor("ATT0001", Title, result.Message, Category, DiagnosticSeverity.Warning, true, Description);
+				DiagnosticDescriptor rule;
+				switch (result.Severity)
+				{
+					case DiagnosticSeverity.Hidden:
+						continue;
+					case DiagnosticSeverity.Info:
+						continue;
+					case DiagnosticSeverity.Warning:
+						rule = new DiagnosticDescriptor("ATT0001", Title, result.Message, Category, DiagnosticSeverity.Warning, true, Description);
+						break;
+					case DiagnosticSeverity.Error:
+						rule = new DiagnosticDescriptor("ATT0002", Title, result.Message, Category, DiagnosticSeverity.Error, true, Description);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
 				var diagnostic = Diagnostic.Create(rule, result.Location, result.Name);
 				context.ReportDiagnostic(diagnostic);
 			}

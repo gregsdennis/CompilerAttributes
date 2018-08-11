@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -7,71 +8,65 @@ namespace CompilerAttributes
 {
 	internal static class SyntaxNodeHelpers
 	{
-		public static IEnumerable<IdenifierLocationResult> CheckSymbol(ISymbol symbol, SyntaxNode syntax)
+		public static IEnumerable<IdenifierLocationResult> CheckSymbol(this SyntaxNode syntax, ISymbol symbol)
 		{
-			if (symbol == null || symbol.Name != (syntax as IdentifierNameSyntax)?.Identifier.Text)
+			if (syntax is SimpleNameSyntax identifier) return CheckSymbol(identifier, symbol);
+
+			Debug.WriteLine($"{syntax.GetType()} - {syntax.GetText()}");
+			return Enumerable.Empty<IdenifierLocationResult>();
+		}
+
+		private static IEnumerable<IdenifierLocationResult> CheckSymbol(SimpleNameSyntax syntax, ISymbol symbol)
+		{
+			if (symbol == null || symbol.Name != syntax?.Identifier.Text)
 				return Enumerable.Empty<IdenifierLocationResult>();
 
-			var attributes = GetAttributes(symbol);
+			return CheckSymbolCore(syntax, symbol, nameof(GeneratesWarningAttribute), DiagnosticSeverity.Warning)
+				.Union(CheckSymbolCore(syntax, symbol, nameof(GeneratesErrorAttribute), DiagnosticSeverity.Error));
+		}
 
-			var results = new List<IdenifierLocationResult>();
-
-			if (symbol is INamedTypeSymbol namedSymbol && namedSymbol.IsGenericType)
-			{
-				var genericArgumentSymbols = namedSymbol.TypeArguments;
-				var genericArgumentSyntaxes = syntax.DescendantNodes().OfType<TypeSyntax>();
-
-				var zipped = genericArgumentSymbols.Zip(genericArgumentSyntaxes,
-				                                        (sym, syn) => new {sym, syn});
-
-				foreach (var arg in zipped)
-				{
-					results.AddRange(CheckSymbol(arg.sym as INamedTypeSymbol, arg.syn));
-				}
-			}
+		private static IEnumerable<IdenifierLocationResult> CheckSymbolCore(SyntaxNode syntax, ISymbol symbol,
+		                                                                    string searchForAttribute, DiagnosticSeverity severity)
+		{
+			var attributes = GetAttributes(symbol, searchForAttribute);
 
 			foreach (var (attribute, id, message) in attributes)
 			{
 				if (attribute == null) continue;
-				results.Add(new IdenifierLocationResult
+				yield return new IdenifierLocationResult
 					{
 						Name = symbol.Name,
 						Location = Location.Create(syntax.SyntaxTree, syntax.Span),
 						Id = id ?? 0,
-						Message = message
-					});
+						Message = message,
+						Severity = severity
+					};
 			}
-
-			return results;
 		}
 
-		private static IEnumerable<(AttributeData Attribute, int? Id, string Message)> GetAttributes(ISymbol symbol)
+		private static IEnumerable<(AttributeData Attribute, int? Id, string Message)> GetAttributes(ISymbol symbol, string searchForAttribute)
 		{
-			var attributes = symbol.GetAttributes()
-			                       .Select(t =>
-				                       {
-					                       var generatorAttribute = t.AttributeClass.GetAttributes()
-					                                                 .FirstOrDefault(a => a.AttributeClass.Name == nameof(GeneratesWarningAttribute) &&
-					                                                                      a.AttributeClass.ContainingNamespace.Name == nameof(CompilerAttributes));
-					                       var attributeArgs = generatorAttribute?.ConstructorArguments
-					                                                             .Select(a => a.Value)
-					                                                             .ToList();
+			return symbol.GetAttributes()
+			             .Select(t =>
+				             {
+					             var generatorAttribute = t.AttributeClass.GetAttributes()
+					                                       .FirstOrDefault(a => a.AttributeClass.Name == searchForAttribute &&
+					                                                            a.AttributeClass.ContainingNamespace.Name == nameof(CompilerAttributes));
 
-										   //var id = (int?) attributeArgs?[0];
-					                       int? id = 0;
-										   var message = (string) attributeArgs?[0];
+					             if (generatorAttribute == null) return (Attribute: null, Id: 0, Message: null);
 
-					                       return (Attribute: t, Id: id, Message: message);
-				                       })
-			                       .Where(t => t.Attribute != null);
 
-			// TODO: refactor this into an extension method
-			if (!(symbol is INamedTypeSymbol namedSymbol && namedSymbol.IsGenericType)) return attributes;
+								 var attributeArgs = generatorAttribute.ConstructorArguments
+					                                                   .Select(a => a.Value)
+					                                                   .ToList();
 
-			var genericArgumentSymbols = namedSymbol.TypeArguments;
-			attributes = attributes.Union(genericArgumentSymbols.SelectMany(GetAttributes));
+					             //var id = (int?) attributeArgs?[0];
+					             int? id = 0;
+					             var message = (string) attributeArgs[0];
 
-			return attributes;
+					             return (Attribute: t, Id: id, Message: message);
+				             })
+			             .Where(t => t.Attribute != null);
 		}
 	}
 }

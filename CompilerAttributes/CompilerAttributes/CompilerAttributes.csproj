@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
@@ -9,17 +9,26 @@
   <PropertyGroup>
     <PackageId>CompilerAttributes</PackageId>
     <PackageVersion>1.0.0.0</PackageVersion>
-    <Authors>gregs</Authors>
-    <PackageLicenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</PackageLicenseUrl>
-    <PackageProjectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</PackageProjectUrl>
-    <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
-    <RepositoryUrl>http://REPOSITORY_URL_HERE_OR_DELETE_THIS_LINE</RepositoryUrl>
+    <Authors>gregsdennis</Authors>
+    <PackageLicenseUrl>https://github.com/gregsdennis/CompilerAttributes/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/gregsdennis/CompilerAttributes</PackageProjectUrl>
+    <PackageIconUrl></PackageIconUrl>
+    <RepositoryUrl>https://github.com/gregsdennis/CompilerAttributes</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>CompilerAttributes</Description>
     <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
-    <Copyright>Copyright</Copyright>
-    <PackageTags>CompilerAttributes, analyzers</PackageTags>
+    <Copyright>Copyright © 2018 Little Crab Solutions</Copyright>
+    <PackageTags>attributes analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard1.3\CompilerAttributes.xml</DocumentationFile>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard1.3\CompilerAttributes.xml</DocumentationFile>
   </PropertyGroup>
    
   <ItemGroup>

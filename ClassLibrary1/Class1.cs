@@ -22,11 +22,20 @@ namespace ClassLibrary1
 
 			Console.WriteLine(nameof(Class1));
 
+			MethodThatShouldNotBeUsed();
+
 			_field = new Class1();
+			var genericVariable = new ExperimentalGeneric<Class1>();
 			return _field;
 		}
 
 		public void Method<T1, T2>() { }
+
+		[DoNotUseThisEver]
+		public void MethodThatShouldNotBeUsed()
+		{
+
+		}
 	}
 
 	[Experimental]
@@ -59,9 +68,15 @@ namespace ClassLibrary1
 	{
 	}
 
-	[GeneratesWarning("This feature is experimental.  Please use with care.")]
+	[GeneratesWarning("{0} is experimental. It may not be around long. Use at your own risk.")]
 	public class ExperimentalAttribute : Attribute
 	{
+	}
+
+	[GeneratesError("{0} is not for public use. Just don't.")]
+	public class DoNotUseThisEverAttribute : Attribute
+	{
+
 	}
 }
 
