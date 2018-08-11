@@ -29,7 +29,7 @@ call "%msbuild%" AutoBuild.sln /p:Configuration="%config%" /m:1 /v:m /fl /flp:Lo
 if not "%errorlevel%"=="0" goto failure
 
 REM package
-call "%msbuild%" CompilerAttributes\CompilerAttributes.csproj /t:pack /p:Configuration="%config%"
+call "%msbuild%" CompilerAttributes\CompilerAttributes\CompilerAttributes.csproj /t:pack /p:Configuration="%config%"
 if not "%errorlevel%"=="0" goto failure
 
 :success
