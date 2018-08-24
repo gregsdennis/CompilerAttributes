@@ -8,7 +8,7 @@
   
   <PropertyGroup>
     <PackageId>CompilerAttributes</PackageId>
-    <PackageVersion>1.0.1</PackageVersion>
+    <PackageVersion>1.0.2</PackageVersion>
     <Authors>gregsdennis</Authors>
     <PackageLicenseUrl>https://github.com/gregsdennis/CompilerAttributes/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/gregsdennis/CompilerAttributes</PackageProjectUrl>
@@ -16,11 +16,11 @@
     <RepositoryUrl>https://github.com/gregsdennis/CompilerAttributes</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>CompilerAttributes</Description>
-    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixed issue with packaging so that the lib is installed as an analyzer and a lib.</PackageReleaseNotes>
     <Copyright>Copyright © 2018 Little Crab Solutions</Copyright>
     <PackageTags>attributes analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
   </PropertyGroup>
   
@@ -45,6 +45,7 @@
   <ItemGroup>
     <None Update="tools\*.ps1" CopyToOutputDirectory="Always" Pack="true" PackagePath="" />
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="lib/netstandard1.3" Visible="false" />
   </ItemGroup>
 
 </Project>
