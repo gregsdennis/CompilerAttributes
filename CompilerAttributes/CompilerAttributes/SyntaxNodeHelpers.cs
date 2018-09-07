@@ -22,7 +22,8 @@ namespace CompilerAttributes
 				return Enumerable.Empty<IdenifierLocationResult>();
 
 			return CheckSymbolCore(syntax, symbol, nameof(GeneratesWarningAttribute), DiagnosticSeverity.Warning)
-				.Union(CheckSymbolCore(syntax, symbol, nameof(GeneratesErrorAttribute), DiagnosticSeverity.Error));
+				.Union(CheckSymbolCore(syntax, symbol, nameof(GeneratesErrorAttribute), DiagnosticSeverity.Error))
+				.Union(CheckSymbolCore(syntax, symbol, nameof(GeneratesMessageAttribute), DiagnosticSeverity.Info));
 		}
 
 		private static IEnumerable<IdenifierLocationResult> CheckSymbolCore(SyntaxNode syntax, ISymbol symbol,
