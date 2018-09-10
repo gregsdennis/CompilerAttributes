@@ -8,7 +8,7 @@
   
   <PropertyGroup>
     <PackageId>CompilerAttributes</PackageId>
-    <PackageVersion>1.1.0</PackageVersion>
+    <PackageVersion>1.1.1</PackageVersion>
     <Authors>gregsdennis</Authors>
     <PackageLicenseUrl>https://github.com/gregsdennis/CompilerAttributes/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/gregsdennis/CompilerAttributes</PackageProjectUrl>
@@ -16,13 +16,16 @@
     <RepositoryUrl>https://github.com/gregsdennis/CompilerAttributes</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>CompilerAttributes</Description>
-    <PackageReleaseNotes>Added Info/Message-level attribute.</PackageReleaseNotes>
+    <PackageReleaseNotes>Signed DLL</PackageReleaseNotes>
     <Copyright>Copyright © 2018 Little Crab Solutions</Copyright>
     <PackageTags>attributes analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
+    <FileVersion>1.1.1.0</FileVersion>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>CompilerAttributes.pfx</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
