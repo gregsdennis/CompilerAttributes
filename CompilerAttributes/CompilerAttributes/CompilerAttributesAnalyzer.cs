@@ -24,6 +24,8 @@ namespace CompilerAttributes
 			new DiagnosticDescriptor("ATT0001", Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description);
 		private static readonly DiagnosticDescriptor ErrorRule =
 			new DiagnosticDescriptor("ATT0002", Title, MessageFormat, Category, DiagnosticSeverity.Error, true, Description);
+		private static readonly DiagnosticDescriptor InfoRule =
+			new DiagnosticDescriptor("ATT0003", Title, MessageFormat, Category, DiagnosticSeverity.Info, true, Description);
 
 		/// <summary>
 		/// Returns a set of descriptors for the diagnostics that this analyzer is capable of producing.
@@ -54,12 +56,13 @@ namespace CompilerAttributes
 					case DiagnosticSeverity.Hidden:
 						continue;
 					case DiagnosticSeverity.Info:
-						continue;
+						rule = new DiagnosticDescriptor("ATT0003", Title, result.Message, Category, DiagnosticSeverity.Info, true, Description);
+						break;
 					case DiagnosticSeverity.Warning:
-						rule = new DiagnosticDescriptor("ATT0001", Title, result.Message, Category, DiagnosticSeverity.Warning, true, Description);
+						rule = new DiagnosticDescriptor("ATT0002", Title, result.Message, Category, DiagnosticSeverity.Warning, true, Description);
 						break;
 					case DiagnosticSeverity.Error:
-						rule = new DiagnosticDescriptor("ATT0002", Title, result.Message, Category, DiagnosticSeverity.Error, true, Description);
+						rule = new DiagnosticDescriptor("ATT0001", Title, result.Message, Category, DiagnosticSeverity.Error, true, Description);
 						break;
 					default:
 						throw new ArgumentOutOfRangeException();
