@@ -8,7 +8,6 @@ namespace CompilerAttributes
 	/// <remarks>
 	/// Ideal use cases for this are elements that you must expose but don't want clients to use.
 	/// </remarks>
-	[AttributeUsage(AttributeTargets.Class)]
 	public sealed class GeneratesErrorAttribute : Attribute
 	{
 		//public int Id { get; }

@@ -5,7 +5,6 @@ namespace CompilerAttributes
 	/// <summary>
 	/// Directs the compiler to generate warnings for usages of identifiers decorated with an attribute that is decorated with this attribute.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Class)]
 	public sealed class GeneratesWarningAttribute : Attribute
 	{
 		//public int Id { get; }
