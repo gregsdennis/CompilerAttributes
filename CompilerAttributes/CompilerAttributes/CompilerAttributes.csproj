@@ -15,13 +15,14 @@
     <RepositoryUrl>https://github.com/gregsdennis/CompilerAttributes</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>CompilerAttributes</Description>
-    <PackageReleaseNotes>Updated to actually output info-level messages (fixes GeneratesMessageAttribute).</PackageReleaseNotes>
+    <PackageReleaseNotes>All symbol types can be attributed now instead of just types.
+Updated to actually output info-level messages (fixes GeneratesMessageAttribute).</PackageReleaseNotes>
     <Copyright>Copyright © 2018 Little Crab Solutions</Copyright>
     <PackageTags>attributes analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.1.1.0</FileVersion>
+    <FileVersion>1.1.2.0</FileVersion>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>CompilerAttributes.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>

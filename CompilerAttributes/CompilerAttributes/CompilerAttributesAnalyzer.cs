@@ -30,7 +30,7 @@ namespace CompilerAttributes
 		/// <summary>
 		/// Returns a set of descriptors for the diagnostics that this analyzer is capable of producing.
 		/// </summary>
-		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(WarningRule, ErrorRule);
+		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(WarningRule, ErrorRule, InfoRule);
 
 		/// <summary>
 		/// Called once at session start to register actions in the analysis context.

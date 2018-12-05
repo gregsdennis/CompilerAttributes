@@ -32,7 +32,7 @@ namespace ClassLibrary1
 		public void Method<T1, T2>() { }
 
 		[DoNotUseThisEver]
-		public void MethodThatShouldNotBeUsed()
+		public static void MethodThatShouldNotBeUsed()
 		{
 
 		}
@@ -84,6 +84,7 @@ namespace Other
 {
 	public class Class1
 	{
+		public static void Init() { ClassLibrary1.Usage.MethodThatShouldNotBeUsed(); }
 	}
 
 	public class Usage
